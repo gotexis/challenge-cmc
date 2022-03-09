@@ -1,16 +1,29 @@
 import { createConnection } from 'typeorm'
-import { Post } from './models/post'
-import { User } from './models/user'
-import { Comment } from './models/comment'
+import { Product } from './models/product'
 
-const sql = async () =>
+const sql = async () => {
   await createConnection({
     type: 'sqlite',
     database: ':memory:',
-    logging: true,
+    // logging: true,
     synchronize: process.env.NODE_ENV !== 'production',
     migrations: ['migration/*.js'],
-    entities: [Post, User, Comment],
+    entities: [Product],
   })
+
+  // create test data
+  await Promise.all(
+    Array.from({ length: 20 }, (_, i) =>
+      Product.save(
+        Product.create({
+          title: `Product ${i}`,
+          description: `description ${i}`,
+          price: i,
+          img: `https://loremflickr.com/300/150/${i}`,
+        }),
+      ),
+    ),
+  )
+}
 
 export default sql

@@ -1,22 +1,68 @@
-import React from "react"
+import React, { useState } from "react"
+import { CartProduct, Product } from "@starter/common/models"
 import { createContext, useContext } from "react"
 
-export const BaseInitialState = {
-  someState: 22
+export const cartInitState = {
+  cart: [] as CartProduct[],
+  addToCart: (product: Product | CartProduct) => {},
+  removeOneFromCart: (product: CartProduct) => {},
+  removeFromCart: (product: CartProduct) => {},
+  itemCount: 0
 }
 
-export const BaseContext = createContext(BaseInitialState)
+export const CartContext = createContext(cartInitState)
 
-export const useBase = () => useContext(BaseContext)
+export const useCart = () => useContext(CartContext)
 
-export const BaseProvider = ({ children }: any) => {
+export const CartProvider = ({ children }: any) => {
+  const [cart, setCart] = useState<CartProduct[]>(cartInitState.cart)
+
+  const itemCount = cart.reduce((acc, item) => acc + item.quantity, 0)
+
+  const addToCart = (item: Product | CartProduct) => {
+    if (cart.find((cartItem) => cartItem.id === item.id)) {
+      setCart(
+        cart.map((cartItem) => {
+          if (cartItem.id === item.id) {
+            cartItem.quantity++
+          }
+          return cartItem
+        })
+      )
+    } else {
+      setCart([...cart, { ...item, quantity: 1 }])
+    }
+  }
+
+  const removeOneFromCart = (item: CartProduct) => {
+    setCart(
+      cart
+        .map((cartItem) => {
+          if (cartItem.id === item.id) {
+            cartItem.quantity--
+          }
+          return cartItem
+        })
+        .filter((cartItem) => cartItem.quantity > 0)
+    )
+  }
+
+  const removeFromCart = (item: Product | CartProduct) => {
+    setCart(cart.filter((cartItem) => cartItem.id !== item.id))
+  }
+
   return (
-    <BaseContext.Provider
+    <CartContext.Provider
       value={{
-        ...BaseInitialState
+        ...cartInitState,
+        cart,
+        addToCart,
+        removeFromCart,
+        removeOneFromCart,
+        itemCount
       }}
     >
       {children}
-    </BaseContext.Provider>
+    </CartContext.Provider>
   )
 }
