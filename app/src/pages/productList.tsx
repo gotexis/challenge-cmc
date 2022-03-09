@@ -5,7 +5,7 @@ import { Product } from "@starter/common/models"
 import { useCart } from "../context/base"
 
 const ProductList = () => {
-  const { cart, addToCart, removeFromCart } = useCart()
+  const { cart, addToCart } = useCart()
   const [products, setProducts] = useState<Product[]>([])
 
   useEffect(() => {
@@ -26,6 +26,7 @@ const ProductList = () => {
             <p>{p.description}</p>
             <button onClick={() => addToCart(p)}>Add to cart</button>
             <p>Price: {p.price} AUD</p>
+            <p>{cart.filter((c) => c.id === p.id).length ? "In cart!" : null}</p>
           </ProductCard>
         ))}
       </Flex>
@@ -61,6 +62,13 @@ const ProductCard = styled.div`
     color: #fff;
     font-weight: 600;
     cursor: pointer;
+
+    :hover {
+      background-color: #080dee;
+    }
+    :active {
+      background-color: #0062cc;
+    }
   }
 `
 

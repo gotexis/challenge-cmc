@@ -7,6 +7,7 @@ export const cartInitState = {
   addToCart: (product: Product | CartProduct) => {},
   removeOneFromCart: (product: CartProduct) => {},
   removeFromCart: (product: CartProduct) => {},
+  setCart: (cart: CartProduct[]) => {},
   itemCount: 0
 }
 
@@ -59,6 +60,7 @@ export const CartProvider = ({ children }: any) => {
         addToCart,
         removeFromCart,
         removeOneFromCart,
+        setCart,
         itemCount
       }}
     >

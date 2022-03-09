@@ -4,11 +4,13 @@ import styled from "styled-components"
 import axios from "axios"
 import { fx } from "@starter/common/fx"
 import { CartCaculateResponse } from "@starter/common/cart"
+import { useHistory } from "react-router"
 
 const Cart = () => {
+  const history = useHistory()
   const { cart, addToCart, removeOneFromCart, removeFromCart } = useCart()
   const [country, setCountry] = useState<string>("AU")
-  const { code, currencyFormatter, rate } = fx.find((c) => c.code === country) || {}
+  const { currencyFormatter, rate } = fx.find((c) => c.code === country) || {}
   const [checkoutResult, setCheckoutResult] = useState<CartCaculateResponse | null>(null)
   const rateConvertedResult =
     checkoutResult && currencyFormatter && rate
@@ -71,6 +73,7 @@ const Cart = () => {
           <h3>Total: {rateConvertedResult.totalPrice}</h3>
           <h3>Shipping: {rateConvertedResult.shipping}</h3>
           <h3>Grand Total: {rateConvertedResult.total}</h3>
+          <Btn onClick={() => history.push("/checkout", { rateConvertedResult, country })}>Checkout</Btn>
         </Box>
       )}
     </div>
